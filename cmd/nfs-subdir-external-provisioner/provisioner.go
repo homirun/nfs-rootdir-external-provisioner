@@ -85,31 +85,35 @@ func (p *nfsProvisioner) Provision(ctx context.Context, options controller.Provi
 	}
 	glog.V(4).Infof("nfs provisioner: VolumeOptions %v", options)
 
-	pvcNamespace := options.PVC.Namespace
-	pvcName := options.PVC.Name
+	// pvcNamespace := options.PVC.Namespace
+	// pvcName := options.PVC.Name
 
-	pvName := strings.Join([]string{pvcNamespace, pvcName, options.PVName}, "-")
+	// pvName := strings.Join([]string{pvcNamespace, pvcName, options.PVName}, "-")
 
-	metadata := &pvcMetadata{
-		data: map[string]string{
-			"name":      pvcName,
-			"namespace": pvcNamespace,
-		},
-		labels:      options.PVC.Labels,
-		annotations: options.PVC.Annotations,
-	}
+	// metadata := &pvcMetadata{
+	// 	data: map[string]string{
+	// 		"name":      pvcName,
+	// 		"namespace": pvcNamespace,
+	// 	},
+	// 	labels:      options.PVC.Labels,
+	// 	annotations: options.PVC.Annotations,
+	// }
+	// DO NOT SUPPORT SUBPATH
+	// fullPath := filepath.Join(mountPath, pvName)
+	// path := filepath.Join(p.path, pvName)
 
-	fullPath := filepath.Join(mountPath, pvName)
-	path := filepath.Join(p.path, pvName)
+	fullPath := mountPath
+	path := p.path
 
-	pathPattern, exists := options.StorageClass.Parameters["pathPattern"]
-	if exists {
-		customPath := metadata.stringParser(pathPattern)
-		if customPath != "" {
-			path = filepath.Join(p.path, customPath)
-			fullPath = filepath.Join(mountPath, customPath)
-		}
-	}
+	// DO NOT SUPPORT SUBPATH
+	// pathPattern, exists := options.StorageClass.Parameters["pathPattern"]
+	// if exists {
+	// 	customPath := metadata.stringParser(pathPattern)
+	// 	if customPath != "" {
+	// 		path = filepath.Join(p.path, customPath)
+	// 		fullPath = filepath.Join(mountPath, customPath)
+	// 	}
+	// }
 
 	glog.V(4).Infof("creating path %s", fullPath)
 	if err := os.MkdirAll(fullPath, 0o777); err != nil {
